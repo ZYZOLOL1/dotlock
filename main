@@ -1,7 +1,30 @@
+
+getgenv().Key = Enum.KeyCode.C
+getgenv().Prediction = 0.125
+getgenv().Partz = "HumanoidRootPart"
+
+
 getgenv().AirshotFunccc = true
 getgenv().Dot = true
 
 
+local script = game:HttpGet('https://raw.githubusercontent.com/ZYZOLOL1/dotlock/main/main')
+
+
+function updateSettings(newSettings)
+    for key, value in pairs(newSettings) do
+        if getgenv()[key] ~= nil then
+            getgenv()[key] = value
+        else
+            warn("Setting '" .. key .. "' does not exist.")
+        end
+    end
+end
+
+
+loadstring(script)()
+
+-- Your existing script goes here (unchanged)
 local CC = game:GetService "Workspace".CurrentCamera
 local LocalMouse = game.Players.LocalPlayer:GetMouse()
 local Locking = false
@@ -59,6 +82,7 @@ UserInputService.InputBegan:Connect(
         end
     end
 )
+
 function getClosestPlayerToCursor()
     local closestPlayer
     local shortestDistance = 137
