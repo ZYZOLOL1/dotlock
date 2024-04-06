@@ -1,0 +1,135 @@
+getgenv().AirshotFunccc = true
+getgenv().Dot = true
+
+
+local CC = game:GetService "Workspace".CurrentCamera
+local LocalMouse = game.Players.LocalPlayer:GetMouse()
+local Locking = false
+local cc = game:GetService("Workspace").CurrentCamera
+local gs = game:GetService("GuiService")
+local ggi = gs.GetGuiInset
+local lp = game:GetService("Players").LocalPlayer
+local mouse = lp:GetMouse()
+
+local Dot = Drawing.new("Circle")
+Dot.Visible = false
+Dot.Radius = 3
+Dot.Filled = true
+Dot.Color = Color3.fromRGB(255, 0, 212)
+Dot.Thickness = 1
+Dot.Transparency = 1
+
+function x(tt, tx, cc)
+    game.StarterGui:SetCore(
+        "SendNotification",
+        {
+            Title = tt,
+            Text = tx,
+            Duration = cc
+        }
+    )
+end
+
+x("ZYZO WARE", "Loaded", 3)
+
+if getgenv().zyzo == true then
+    x("ZYZO WARE", "Already Loaded", 5)
+    return
+end
+getgenv().zyzo = true
+
+local UserInputService = game:GetService("UserInputService")
+
+UserInputService.InputBegan:Connect(
+    function(keygo, ok)
+        if (not ok) then
+            if (keygo.KeyCode == getgenv().Key) then
+                Locking = not Locking
+                if Locking then
+                    Plr = getClosestPlayerToCursor()
+                    x("ZYZO WARE", "Target:" .. Plr.Character.Humanoid.DisplayName, 3)
+                elseif not Locking then
+                    if Plr then
+						Dot.Visible = false
+                        Plr = nil
+                        x("ZYZO WARE", "Unlocked", 3)
+                    end
+                end
+            end
+        end
+    end
+)
+function getClosestPlayerToCursor()
+    local closestPlayer
+    local shortestDistance = 137
+
+    for i, v in pairs(game.Players:GetPlayers()) do
+        if
+            v ~= game.Players.LocalPlayer and v.Character and v.Character:FindFirstChild("Humanoid") and
+                v.Character.Humanoid.Health ~= 0 and
+                v.Character:FindFirstChild("LowerTorso")
+         then
+            local pos = CC:WorldToViewportPoint(v.Character.LowerTorso.Position)
+            local magnitude = (Vector2.new(pos.X, pos.Y) - Vector2.new(LocalMouse.X, LocalMouse.Y)).magnitude
+            if magnitude < shortestDistance then
+                closestPlayer = v
+                shortestDistance = magnitude
+            end
+        end
+    end
+    return closestPlayer
+end
+
+function getVel(Target)
+    local lastPosition = Target.Character.HumanoidRootPart.Position
+    wait(1)
+    local currentPosition = Target.Character.HumanoidRootPart.Position
+    local newVelocity = (currentPosition - lastPosition) / 1
+    return newVelocity
+end
+
+function getVel(Before, After, deltaTime)
+	local Displacement = (After - Before)
+	local Velocity = Displacement / deltaTime
+
+	return Velocity
+end
+
+local PreviousPosition; 
+local PartVelocity; 
+game:GetService("RunService").RenderStepped:Connect(function(deltaTime)
+        if Plr ~= nil then			
+			if (not PreviousPosition) then
+				PreviousPosition = Plr.Character[getgenv().Partz].Position
+			end
+			PartVelocity = getVel(PreviousPosition, Plr.Character[getgenv().Partz].Position, deltaTime)
+			PreviousPosition = Plr.Character[getgenv().Partz].Position
+			-- 
+			if getgenv().Dot == true and Locking then
+                local Vector, OnScreen =
+                    cc:worldToViewportPoint(
+                    Plr.Character[getgenv().Partz].Position + PartVelocity * getgenv().Prediction
+                )
+                Dot.Visible = true
+                Dot.Position = Vector2.new(Vector.X, Vector.Y)
+            else
+                Dot.Visible = false
+            end
+        end
+    end
+)
+
+local rawmetatable = getrawmetatable(game)
+local old = rawmetatable.__namecall
+setreadonly(rawmetatable, false)
+rawmetatable.__namecall =
+    newcclosure(
+    function(...)
+        local args = {...}
+        if Plr ~= nil and getnamecallmethod() == "FireServer" and args[2] == "UpdateMousePos" then
+            args[3] = Plr.Character[getgenv().Partz].Position + PartVelocity * getgenv().Prediction
+            return old(unpack(args))
+        end
+        return old(...)
+    end
+)
