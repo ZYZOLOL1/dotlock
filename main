@@ -1,9 +1,3 @@
-
-getgenv().Key = Enum.KeyCode.C
-getgenv().Prediction = 0.125
-getgenv().Partz = "HumanoidRootPart"
-
-
 getgenv().AirshotFunccc = true
 getgenv().Dot = true
 
