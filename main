@@ -18,7 +18,6 @@ end
 
 loadstring(script)()
 
--- Your existing script goes here (unchanged)
 local CC = game:GetService "Workspace".CurrentCamera
 local LocalMouse = game.Players.LocalPlayer:GetMouse()
 local Locking = false
